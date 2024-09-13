@@ -49,6 +49,8 @@ If conda is stuck in "Solving environment..." there are two options to try:
 ## Data
 Download [ABC](https://archive.nyu.edu/handle/2451/43778) STEP files (100 folders). 
 
+Download [Furniture Data](https://drive.google.com/drive/folders/1WpV_rgJDXEkBoWaQsqEoO9Ir8CABI8oP?usp=sharing). JSON file contains object UIDs that refer to the original STEP files. 
+
 The faces, edges, and vertices need to be extracted from the STEP files.  
 
 Process the B-reps (under ```data_process``` folder):
