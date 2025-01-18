@@ -5,22 +5,288 @@ import torch.nn as nn
 import random
 import string
 import argparse
-from chamferdist import ChamferDistance
+#from chamferdist import ChamferDistance
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from typing import List, Optional, Tuple, Union
+from collections import defaultdict
+# from OCC.Core.gp import gp_Pnt, gp_Pnt
+# from OCC.Core.TColgp import TColgp_Array2OfPnt
+# from OCC.Core.GeomAPI import GeomAPI_PointsToBSplineSurface, GeomAPI_PointsToBSpline
+# from OCC.Core.GeomAbs import GeomAbs_C2
+# from OCC.Core.BRepBuilderAPI import BRepBuilderAPI_MakeWire, BRepBuilderAPI_MakeFace, BRepBuilderAPI_MakeEdge
+# from OCC.Extend.TopologyUtils import TopologyExplorer, WireExplorer
+# from OCC.Core.TColgp import TColgp_Array1OfPnt
+# from OCC.Core.gp import gp_Pnt
+# from OCC.Core.ShapeFix import ShapeFix_Face, ShapeFix_Wire, ShapeFix_Edge
+# from OCC.Core.ShapeAnalysis import ShapeAnalysis_Wire
+# from OCC.Core.BRepBuilderAPI import BRepBuilderAPI_Sewing, BRepBuilderAPI_MakeSolid
+class UnionFind:
+    def __init__(self, size):
+        self.parent = list(range(size))  # 初始化每个元素的父节点为自身
 
-from OCC.Core.gp import gp_Pnt, gp_Pnt
-from OCC.Core.TColgp import TColgp_Array2OfPnt
-from OCC.Core.GeomAPI import GeomAPI_PointsToBSplineSurface, GeomAPI_PointsToBSpline
-from OCC.Core.GeomAbs import GeomAbs_C2
-from OCC.Core.BRepBuilderAPI import BRepBuilderAPI_MakeWire, BRepBuilderAPI_MakeFace, BRepBuilderAPI_MakeEdge
-from OCC.Extend.TopologyUtils import TopologyExplorer, WireExplorer
-from OCC.Core.TColgp import TColgp_Array1OfPnt
-from OCC.Core.gp import gp_Pnt
-from OCC.Core.ShapeFix import ShapeFix_Face, ShapeFix_Wire, ShapeFix_Edge
-from OCC.Core.ShapeAnalysis import ShapeAnalysis_Wire
-from OCC.Core.BRepBuilderAPI import BRepBuilderAPI_Sewing, BRepBuilderAPI_MakeSolid
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])  # 路径压缩
+        return self.parent[x]
 
+    def union(self, x, y):
+        fx = self.find(x)
+        fy = self.find(y)
+        if fx != fy:
+            self.parent[fy] = fx  # 合并两个集合
+
+def merge_sets_union_find(a_list, b_list):
+    n = len(b_list)
+    uf = UnionFind(n)  # 初始化并查集
+
+    # 创建元素到集合的映射，使用集合索引
+    element_to_sets = defaultdict(list)
+    for idx, s in enumerate(b_list):
+        for element in s:
+            element_to_sets[element].append(idx)
+
+    # 根据 a 中的每个对，合并包含 i 或 j 的所有集合
+    for pair in a_list:
+        if len(pair) != 2:
+            print(f"警告：集合 {pair} 不是一个包含两个元素的集合。跳过。")
+            continue  # 跳过不符合要求的集合
+
+        i, j = pair
+        sets_i = element_to_sets.get(i, [])
+        sets_j = element_to_sets.get(j, [])
+        all_related = sets_i + sets_j
+
+        # 合并所有相关集合
+        for idx in all_related[1:]:
+            uf.union(all_related[0], idx)
+
+    # 聚合集合
+    groups = defaultdict(set)
+    for idx, s in enumerate(b_list):
+        root = uf.find(idx)  # 查找当前集合的根节点
+        groups[root].update(s)  # 将当前集合的元素添加到对应的组中
+
+    # 转换为列表
+    c = list(groups.values())
+    return c
+
+def build_edge_sep_merges(edge_mask_cad):
+    """
+    根据 edge_mask_cad 构建 edge_sep_merges。
+
+    参数：
+        edge_mask_cad (np.ndarray): 面-面邻接矩阵 [num_face, num_face]，
+                                    edge_mask_cad[i,j]==False 表示面 i 和面 j 共享边。
+
+    返回：
+        edge_sep_merges (list of list of int): 每条共享边对应的两个顶点索引对。
+    """
+    num_face = edge_mask_cad.shape[0]
+    
+    # 计算每个面的共享边数量
+    shared_edge_counts = (edge_mask_cad == False).sum(axis=1)
+    
+    # 计算 edge_id_offset
+    edge_id_offset = 2 * np.concatenate(([0], np.cumsum(shared_edge_counts)))[:-1]
+    
+    # 预先计算每个面共享边的面列表
+    shared_faces = [np.where(edge_mask_cad[i] == False)[0] for i in range(num_face)]
+    
+    edge_sep_merges = []
+    
+    for i in range(num_face):
+        # 获取面 i 共享边的所有面 j
+        shared_faces_j = shared_faces[i]
+        
+        for x, j in enumerate(shared_faces_j):
+            if j <= i:
+                # 只处理上三角部分，避免重复
+                continue
+            
+            # 获取面 j 共享边的所有面
+            shared_faces_j_of_j = shared_faces[j]
+            
+            # 找到面 i 在面 j 的共享边中的位置 y
+            y_indices = np.where(shared_faces_j_of_j == i)[0]
+            if len(y_indices) == 0:
+                raise ValueError(f"面 {j} 没有与面 {i} 共享边的记录。")
+            y = y_indices[0]
+            
+            # 计算顶点索引
+            vertex_i_0 = edge_id_offset[i] + 2 * x
+            vertex_i_1 = vertex_i_0 + 1
+            vertex_j_0 = edge_id_offset[j] + 2 * y
+            vertex_j_1 = vertex_j_0 + 1
+            
+            # 添加两对顶点索引
+            edge_sep_merges.append([vertex_i_0, vertex_j_0])
+            edge_sep_merges.append([vertex_i_1, vertex_j_1])
+    
+    return edge_sep_merges
+
+def detect_shared_vertex2(edgeV_cad, edge_mask_cad, edgeV_bbox):
+    """
+    Find the shared vertices 
+    """
+    edge_id_offset = 2 * np.concatenate([np.array([0]),np.cumsum((edge_mask_cad==False).sum(1))])[:-1]
+    valid = True
+    
+    # Detect shared-vertex on seperate face loop
+    used_vertex = []
+    face_sep_merges = []
+    merge_num=0
+    for face_idx, (face_edges, face_edges_mask, bbox_edges) in enumerate(zip(edgeV_cad, edge_mask_cad, edgeV_bbox)):
+        face_edges = face_edges[~face_edges_mask]
+        face_edges = face_edges.reshape(len(face_edges),2,3)
+        face_start_id = edge_id_offset[face_idx]  
+
+        # connect end points by closest distance (edge bbox)
+        merged_vertex_id = edge2loop(bbox_edges)            
+        if len(merged_vertex_id) == len(face_edges):
+            merged_vertex_id = face_start_id + merged_vertex_id
+            face_sep_merges.append(merged_vertex_id)
+            used_vertex.append(bbox_edges*3)
+            merge_num+=1
+            #print('[PASS]')
+            continue
+        
+        # connect end points by closest distance (vertex pos)
+        merged_vertex_id = edge2loop(face_edges)
+        if len(merged_vertex_id) == len(face_edges):
+            merged_vertex_id = face_start_id + merged_vertex_id
+            face_sep_merges.append(merged_vertex_id)
+            used_vertex.append(face_edges)
+            merge_num+=1
+            #print('[PASS]')
+            continue
+
+        print('[FAILED] on '+str(merge_num))
+        valid = False
+        break
+
+    # Invalid
+    if not valid:
+        assert False
+    edge_sep_merges=build_edge_sep_merges(edge_mask_cad)
+    # Detect shared-vertex across faces 
+    total_pnts = np.vstack(used_vertex)
+    total_pnts = total_pnts.reshape(len(total_pnts),2,3)
+    total_pnts_flatten = total_pnts.reshape(-1,3)
+    target_list = []
+
+    # 遍历列表 a
+    for arr in face_sep_merges:
+        # 对每个 array 转换为包含长度为 2 的集合的列表
+        set_list = [set(arr[i]) for i in range(arr.shape[0])]
+        # 将转换后的 list 合并到目标列表中
+        target_list.extend(set_list)
+        
+    total_ids=merge_sets_union_find(edge_sep_merges,target_list)
+
+    # remove subsets 
+    total_ids = keep_largelist(total_ids)
+
+
+    # merged vertices 
+    unique_vertices = []
+    for center_id in total_ids:
+        center_pnts = total_pnts_flatten[center_id].mean(0) / 3.0
+        unique_vertices.append(center_pnts)
+    unique_vertices = np.vstack(unique_vertices)
+
+    new_vertex_dict = {}
+    for new_id, old_ids in enumerate(total_ids):
+        new_vertex_dict[new_id] = old_ids
+
+    return [unique_vertices, new_vertex_dict]
+def detect_shared_edge2(unique_vertices, new_vertex_dict, edge_z_cad, surf_z_cad, edge_mask_cad):
+    """
+    Find the shared edges using edge_mask_cad.
+
+    Inputs:
+    - unique_vertices: Array of unique vertex positions.
+    - new_vertex_dict: Dictionary mapping new vertex IDs to old vertex IDs.
+    - edge_z_cad: Array of edge latent vectors (or features).
+    - surf_z_cad: Array of face latent vectors (or features).
+    - edge_mask_cad: Boolean array indicating edge connections between faces.
+
+    Outputs:
+    - unique_faces: Array of unique face latent vectors.
+    - unique_edges: Array of unique edge latent vectors.
+    - FaceEdgeAdj: List of lists, each sublist contains indices of edges belonging to a face.
+    - EdgeVertexAdj: Array of edge-to-vertex adjacency, shape (num_edges, 2).
+    """
+
+    # Re-assign edge start/end to unique vertices
+    # Compute new edge vertex indices based on new_vertex_dict
+    num_edges = len(edge_z_cad)
+    new_ids = []
+
+    for old_id in np.arange(2 * num_edges):
+        # Find the new vertex ID corresponding to the old vertex ID
+        new_id = None
+        for key, value in new_vertex_dict.items():
+            if old_id in value:
+                new_id = key
+                break
+        assert new_id is not None, f"Old vertex ID {old_id} not found in new_vertex_dict."
+        new_ids.append(new_id)
+
+    # Edge-to-vertex adjacency
+    EdgeVertexAdj = np.array(new_ids).reshape(-1, 2)
+
+    # Initialize lists to store unique edges and their indices
+    unique_edge_tuples = []
+    unique_edge_indices = []
+    edge_map = {}  # Map from edge tuple to unique edge index
+
+    # Iterate over all edges to identify unique edges using edge_mask_cad
+    edge_counter = 0  # Counter for unique edges
+    num_faces = edge_mask_cad.shape[0]
+    FaceEdgeAdj = []  # List to store edge indices for each face
+
+    # Compute cumulative sum of edges per face to get edge offsets
+    edges_per_face = (edge_mask_cad == False).sum(axis=1)
+    edge_offsets = np.concatenate([[0], np.cumsum(edges_per_face[:-1])])
+
+    # Build FaceEdgeAdj and identify unique edges
+    for face_idx in range(num_faces):
+        face_edges = []
+        # Get the range of edges for this face
+        edge_start = edge_offsets[face_idx]
+        edge_end = edge_offsets[face_idx] + edges_per_face[face_idx]
+        for edge_idx in range(edge_start, edge_end):
+            edge_vertices = tuple(sorted(EdgeVertexAdj[edge_idx]))
+            if edge_vertices not in edge_map:
+                # This is a unique edge
+                edge_map[edge_vertices] = edge_counter
+                unique_edge_indices.append(edge_idx)
+                unique_edge_tuples.append(edge_vertices)
+                face_edges.append(edge_counter)
+                edge_counter += 1
+            else:
+                # Edge already exists, get its index
+                face_edges.append(edge_map[edge_vertices])
+        FaceEdgeAdj.append(face_edges)
+    
+    # Build unique_edges array
+    unique_edges = edge_z_cad[unique_edge_indices]
+
+    # unique_faces remains the same as surf_z_cad
+    unique_faces = surf_z_cad
+
+    num_initial_edges = len(edge_z_cad)
+    num_unique_edges = len(unique_edges)
+
+    if not num_unique_edges * 2 == num_initial_edges:
+        assert False, f'edge not reduced by 2: initial edges {num_initial_edges}, unique edges {num_unique_edges}'
+
+    # Update EdgeVertexAdj to only include unique edges
+    EdgeVertexAdj = np.array(unique_edge_tuples)
+
+    print(f'Post-process: F-{len(unique_faces)} E-{len(unique_edges)} V-{len(unique_vertices)}')
+
+    return unique_faces, unique_edges, FaceEdgeAdj, EdgeVertexAdj
 
 def generate_random_string(length):
     characters = string.ascii_letters + string.digits  # You can include other characters if needed
@@ -183,7 +449,7 @@ def get_args_ldm():
                         help='Path to pretrained surface vae weights')  
     parser.add_argument('--edgevae', type=str, default='proj_log/deepcad_edgevae/epoch_300.pt', 
                         help='Path to pretrained edge vae weights')  
-    parser.add_argument("--option", type=str, choices=['surfpos', 'surfz', 'edgepos', 'edgez'], default='surfpos', 
+    parser.add_argument("--option", type=str, choices=['surfpos', 'surfz', 'edgepos', 'edgez','gedgepos', 'gedgez'], default='surfpos', 
                         help="Choose between option [surfpos,edgepos,surfz,edgez] (default: surfpos)")
     # Training parameters
     parser.add_argument('--batch_size', type=int, default=512, help='input batch size')  

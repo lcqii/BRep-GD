@@ -1,4 +1,4 @@
---extra-index-url https://download.pytorch.org/whl/cu118
+--extra-index-url https://download.pytorch.org/whl/cu113
 torch
 torchvision
 torchaudio
@@ -10,3 +10,4 @@ scipy
 trimesh
 plyfile
 scikit-learn
+json

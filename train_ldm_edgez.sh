@@ -69,14 +69,26 @@
 #     --env furniture_ldm_surfz --train_nepoch 3000 --batch_size 256 \
 #     --max_face 50 --max_edge 30 --cf
 
-python ldm.py --data /root/autodl-tmp/furniture_parsed \
-    --list /root/autodl-tmp/furniture_data_split_6bit_filtered.pkl --option edgepos \
-    --surfvae /root/autodl-tmp/furniture_vae_surf.pt --gpu 0 1 \
-    --env furniture_ldm_edgepos --train_nepoch 500 --test_nepoch 1 --batch_size 4 \
-    --max_face 50 --max_edge 50 --cf
+# python ldm.py --data /root/autodl-tmp/furniture_parsed \
+#     --list /root/autodl-tmp/furniture_data_split_6bit_filtered.pkl --option edgepos \
+#     --surfvae /root/autodl-tmp/furniture_vae_surf.pt --gpu 0 1 \
+#     --env furniture_ldm_edgepos --train_nepoch 500 --save_nepoch 1 --batch_size 6 \
+#     --max_face 50 --max_edge 50 --cf
+#tensorboard --logdir=proj_log/furniture_ldm_edgez/tensorboard_train --host=127.0.0.1 --port=8899
 
-# python ldm.py --data data_process/furniture_parsed \
-#     --list data_process/furniture_data_split_6bit.pkl --option edgez \
-#     --surfvae proj_log/furniture_vae_surf.pt --edgevae proj_log/furniture_vae_edge.pt --gpu 0 1 \
-#     --env furniture_ldm_edgez --train_nepoch 1000 --batch_size 64 \
-#     --max_face 50 --max_edge 30 --cf
+# /root/autodl-tmp/furniture_split_6bit_filtered_balanced.pkl
+# /root/autodl-tmp/furniture_data_split_6bit_filtered.pkl
+
+# python ldm.py --data /root/autodl-tmp/furniture_parsed \
+#     --list /root/autodl-tmp/furniture_split_6bit_filtered_balanced.pkl --option gedgez \
+#     --surfvae /root/autodl-tmp/furniture_vae_surf.pt --edgevae /root/autodl-tmp/furniture_vae_edge.pt --gpu 0 1\
+#     --env furniture_ldm_gedgez_g --train_nepoch 1000 --test_nepoch 5 --batch_size 96 \
+#     --max_face 50 --max_edge 50 --bbox_scaled 1 --cf
+
+
+# tensorboard --logdir=proj_log/furniture_ldm_edgez/tensorboard_train --host=127.0.0.1 --port=7777
+python ldm.py --data /root/autodl-tmp/furniture_parsed \
+    --list /root/autodl-tmp/furniture_split_6bit_filtered_balanced.pkl --option edgez \
+    --surfvae /root/autodl-tmp/furniture_vae_surf.pt --edgevae /root/autodl-tmp/furniture_vae_edge.pt --gpu 0 1\
+    --env furniture_ldm_edgez --train_nepoch 1000 --test_nepoch 5 --batch_size 48 \
+    --max_face 50 --max_edge 50 --cf
