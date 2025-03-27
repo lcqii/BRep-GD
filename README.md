@@ -1,9 +1,9 @@
 
 
-![alt CADiff](resources/pipeline.png)
+![alt BRep-GD](resources/pipeline.png)
 
-> We introduces CADiff, a novel graph diffusion model designed to address the challenges of topological validity and efficient generation in complex CAD Boundary Representation
-modeling. By representing B-reps as graph structures and incorporating a continuous topology decoupled diffusion mechanism, CADiff achieves simultaneous generation of topological and geometric features, significantly improving the efficiency and quality of B-rep model generation.
+> We introduces BRep-GD, a novel graph diffusion model designed to address the challenges of topological validity and efficient generation in complex CAD Boundary Representation
+modeling. By representing B-reps as graph structures and incorporating a continuous topology decoupled diffusion mechanism, BRep-GD achieves simultaneous generation of topological and geometric features, significantly improving the efficiency and quality of B-rep model generation.
 
 
 ## Requirements
