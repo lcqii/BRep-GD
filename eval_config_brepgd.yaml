@@ -1,0 +1,71 @@
+abc:
+  surfpos_weight: abc_ldm_surfpos.pt
+  surfz_weight:   abc_ldm_surfz.pt
+  edgepos_weight: abc_ldm_edgepos.pt
+  edgez_weight:   abc_ldm_edgez.pt
+  surfvae_weight: abc_vae_surf.pt
+  edgevae_weight: abc_vae_edge.pt
+  save_folder:    samples_abc
+  batch_size:     16
+  z_threshold:    0.2
+  bbox_threshold: 0.08
+  num_surfaces:   50
+  num_edges:      40
+  use_cf:         False
+  class_label:    []
+
+deepcad:
+  surfpos_weight: /path/to/logs/CADiff/deepcad_ldm_surfpos_filtered_balanced/epoch_3000.pt
+  surfz_weight:   /path/to/checkpoints/deepcad_ldm_surfz.pt
+  GEdgePos_weight: /path/to/logs/CADiff/deepcad_ldm_GEdgePos_cgtd/epoch_3000.pt
+  GEdgeZ_weight:  /path/to/logs/CADiff/deepcad_ldm_GEdgez_cgtd/epoch_1700.pt
+  surfvae_weight: /path/to/checkpoints/deepcad_vae_surf.pt
+  edgevae_weight: /path/to/checkpoints/deepcad_vae_edge.pt
+  save_folder:    sample_cadiff/deepcad-3000-edge
+  seed: 2333
+  batch_size:     8
+  z_threshold:    0.2
+  bbox_threshold: 0.08
+  num_surfaces:   40
+  num_edges:      30
+  edge_threshold: 0.2
+  use_cf:         False
+  class_label:    []
+
+furniture:
+  surfpos_weight: /path/to/logs/brepgen/furniture_ldm_surfpos_filtered_balanced/epoch_3000.pt
+  surfz_weight:   /path/to/logs/brepgen/furniture_ldm_surfz_filtered_balanced/epoch_3000.pt
+  GEdgePos_weight: /path/to/logs/CADiff/furniture_ldm_GEdgePos_cgtd/epoch_1800.pt
+  GEdgeZ_weight: /path/to/logs/CADiff/furniture_ldm_GEdgez_cgtd/epoch_1100.pt
+  surfvae_weight: checkpoints/furniture_vae_surf.pt
+  edgevae_weight: checkpoints/furniture_vae_edge.pt
+  save_folder:   sample_cadiff/furniture-3000-2
+  seed: 42
+  batch_size:   8
+  z_threshold:    0.2 # 0.2
+  bbox_threshold: 0.08 # 0.08
+  num_surfaces:   60 #60
+  num_edges:      50 #50
+  use_cf:         True
+  class_label:    lamp # option: [bathtub/bed/bench/bookshelf/cabinet/chair/couch/lamp/sofa/table]
+          
+
+
+cadnet:
+  surfpos_weight: /path/to/logs/CADiff/cadnet40v2_ldm_surfpos/epoch_3000.pt
+  surfz_weight:   /path/to/logs/CADiff/cadnet40v2_ldm_surfZ/epoch_3000.pt
+  GEdgePos_weight: /path/to/logs/CADiff/cadnet40v2_ldm_GEdgePos_cgtd/epoch_1000.pt
+  GEdgeZ_weight: /path/to/logs/CADiff/cadnet40v2_ldm_GEdgeZ_cgtd/epoch_1200.pt
+  
+  surfvae_weight: /path/to/checkpoints/cadnet40v2_vae_surf.pt
+  edgevae_weight: /path/to/checkpoints/cadnet40v2_vae_edge.pt
+  save_folder:   sample_cadiff/cadnet-3000 #sample_brepgen/bathtub
+  seed: 23
+  batch_size:   2
+  z_threshold:    0.2 # 0.2
+  bbox_threshold: 0.08 # 0.08
+  num_surfaces:   60 #60
+  num_edges:      50 #50
+  edge_threshold: 0.2
+  use_cf:         True
+  class_label:    lamp # option: [bathtub/bed/bench/bookshelf/cabinet/chair/couch/lamp/sofa/table]

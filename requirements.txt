@@ -1,0 +1,12 @@
+--extra-index-url https://download.pytorch.org/whl/cu118
+torch
+torchvision
+torchaudio
+diffusers[torch]==0.27
+transformers
+wandb
+matplotlib
+scipy
+trimesh
+plyfile
+scikit-learn

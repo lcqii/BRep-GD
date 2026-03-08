@@ -1,0 +1,31 @@
+# Ignore heavy data, weights, logs, and generated outputs
+checkpoints/
+datasets/
+logs/
+samples*/
+sample*/
+proj_log/
+models.tar.gz
+furniture_ldm_GBrep/
+# Parsed/generated data
+*_parsed/
+data_process/*_parsed*/
+data_process/*.pkl
+!data_process/cadnet40v2_data_split_6bit.pkl
+!data_process/deepcad_split_6bit_filtered_balanced.pkl
+!data_process/furniture_data_split_6bit.pkl
+data_process/*.tar.gz
+# Build artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.so
+build/
+dist/
+*.egg-info/
+# Notebook/temporary
+*.ipynb_checkpoints/
+*.ipynb
+*.tmp
+*.log
+nohup.out

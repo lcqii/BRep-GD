@@ -1,0 +1,88 @@
+abc:
+  surfpos_weight: abc_ldm_surfpos.pt
+  surfz_weight:   abc_ldm_surfz.pt
+  edgepos_weight: abc_ldm_edgepos.pt
+  edgez_weight:   abc_ldm_edgez.pt
+  surfvae_weight: abc_vae_surf.pt
+  edgevae_weight: abc_vae_edge.pt
+  save_folder:    samples_abc
+  batch_size:     16
+  z_threshold:    0.2
+  bbox_threshold: 0.08
+  num_surfaces:   50
+  num_edges:      40
+  use_cf:         False
+  class_label:    []
+
+deepcad:
+  surfpos_weight: deepcad_ldm_surfpos.pt
+  surfz_weight:   deepcad_ldm_surfz.pt
+  edgepos_weight: deepcad_ldm_edgepos.pt
+  edgez_weight:   deepcad_ldm_edgez.pt
+  surfvae_weight: deepcad_vae_surf.pt
+  edgevae_weight: deepcad_vae_edge.pt
+  save_folder:    samples_deepcad
+  batch_size:     16
+  z_threshold:    0.2
+  bbox_threshold: 0.08
+  num_surfaces:   30
+  num_edges:      30
+  use_cf:         False
+  class_label:    []
+
+furniture:
+  surfpos_weight: checkpoints/furniture_ldm_surfpos.pt
+  surfz_weight:   checkpoints/furniture_ldm_surfz.pt
+  edgepos_weight: checkpoints/furniture_ldm_edgepos.pt
+  edgez_weight:   checkpoints/furniture_ldm_edgez.pt
+  surfvae_weight: checkpoints/furniture_vae_surf.pt
+  edgevae_weight: checkpoints/furniture_vae_edge.pt
+  GraphBrep_weight: proj_log/GraphGBrep-fine/epoch_47.pt # checkpoints/epoch_423.pt
+  save_folder:    samples_furniture_try
+  batch_size:     2
+  z_threshold:    0.2
+  bbox_threshold: 0.08
+  num_surfaces:   50 #60
+  num_edges:      30
+  use_cf:         True
+  class_label:    bathtub # option: [bathtub/bed/bench/bookshelf/cabinet/chair/couch/lamp/sofa/table]
+training:
+    eval_batch_size : 512
+    n_iters : 1000000
+    snapshot_freq : 5000  # SET Larger values to save less checkpoints
+    log_freq : 200
+    eval_freq : 5000
+    ## store additional checkpoints for preemption
+    snapshot_freq_for_preemption : 2000
+    ## produce samples at each snapshot.
+    snapshot_sampling : True
+    likelihood_weighting : False  
+    reduce_mean : False  
+model:
+  name : 'GB'
+  ema_rate : 0.9999
+  normalization : 'GroupNorm'
+  nonlinearity : 'swish'
+  nf : 64
+  num_gnn_layers : 6
+  conditional : True
+  embedding_type : 'positional'
+  rw_depth : 8
+  graph_layer : 'GINE'
+  edge_th : -1.
+  heads : 8
+  dropout : 0.1
+
+  num_scales : 1000  # SDE total steps (N)
+  sigma_min : 0.01
+  sigma_max : 50
+  # node_beta_min : 0.1
+  # node_beta_max : 20.
+  # edge_beta_min : 0.1
+  # edge_beta_max : 20.
+  pos_beta_min : 0.1
+  pos_beta_max : 1
+  uv_beta_min : 0.1
+  uv_beta_max : 1
+  adj_beta_min : 0.2
+  adj_beta_max : 0.8

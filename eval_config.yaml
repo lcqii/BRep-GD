@@ -1,0 +1,104 @@
+abc:
+  surfpos_weight: abc_ldm_surfpos.pt
+  surfz_weight:   abc_ldm_surfz.pt
+  edgepos_weight: abc_ldm_edgepos.pt
+  edgez_weight:   abc_ldm_edgez.pt
+  surfvae_weight: abc_vae_surf.pt
+  edgevae_weight: abc_vae_edge.pt
+  save_folder:    samples_abc
+  batch_size:     4
+  z_threshold:    0.2
+  bbox_threshold: 0.08
+  num_surfaces:   50
+  num_edges:      30
+  use_cf:         False
+  class_label:    []
+
+deepcad:
+  surfpos_weight: /home/luochenqi/lcq/experiments/logs/CADiff/deepcad_ldm_surfpos_filtered_balanced/epoch_3000.pt
+  surfz_weight:   /home/luochenqi/lcq/experiments/GDBG/checkpoints/deepcad_ldm_surfz.pt
+  edgepos_weight: /home/luochenqi/lcq/experiments/logs/brepgen/deepcad_ldm_edgepos/epoch_1000.pt
+  #/home/luochenqi/lcq/experiments/GDBG/checkpoints/deepcad_ldm_edgepos.pt
+  edgez_weight:   /home/luochenqi/lcq/experiments/GDBG/checkpoints/deepcad_ldm_edgez.pt
+  surfvae_weight: /home/luochenqi/lcq/experiments/GDBG/checkpoints/deepcad_vae_surf.pt
+  edgevae_weight: /home/luochenqi/lcq/experiments/GDBG/checkpoints/deepcad_vae_edge.pt
+  # save_folder:    sample_brepgen/deepcad-3000-time
+  save_folder:    sample_brepgen/deepcad-3000-edge
+  seed: 42
+  batch_size:     8
+  z_threshold:    0.2
+  bbox_threshold: 0.08
+  num_surfaces:   40
+  num_edges:      30
+  use_cf:         False
+  class_label:    []
+
+furniture:
+  surfpos_weight: /home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_surfpos_filtered_balanced/epoch_3000.pt
+  #/home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_surfpos/epoch_1000.pt #checkpoints/furniture_ldm_surfpos.pt
+  surfz_weight:   /home/luochenqi/lcq/experiments/logs/brepgen/furniture_ldm_surfz_filtered_balanced/epoch_3000.pt
+  #checkpoints/furniture_ldm_surfz.pt
+  edge_weight:   /home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_GeoEdge/epoch_200.pt
+  edgepos_weight: /home/luochenqi/lcq/experiments/logs/brepgen/furniture_ldm_edgepos/epoch_1000.pt
+  #checkpoints/furniture_ldm_edgepos.pt
+  GDBG_weight: /home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_GDBG/epoch_45.pt
+  GEvp_weight: /home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_GEvp1000/epoch_1200.pt
+  GEvpAC_weight:  /home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_ADJ/epoch_125.pt #/home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_GEvpAC1000/epoch_154.pt
+  GEdge_weight: /home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_GEdge/epoch_175.pt
+  GEdgePos_weight: /home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_GEdgePos_branch/epoch_1000.pt
+  #/home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_GEdgePos_try/epoch_1000.pt
+  #/home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_GEdgePos_AGL_noc/epoch_350.pt
+  #/home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_GEdgePos_noc_ts/epoch_300.pt
+  #/home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_GEdgePos_noc/epoch_1000.pt
+   #/home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_GEdgePos_cross_noc/epoch_250.pt 
+   #/home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_GEdgePos/epoch_1009.pt 
+  #/home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_GEdgePos_cross/epoch_305.pt 
+  GEdgeZ_weight: /home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_GEdgeZ_branch/epoch_1215.pt
+  #/home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_GEdgeZ_refine/epoch_500.pt
+  #/home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_GEdgeZ_try/epoch_300.pt
+  #/home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_GEdgeZ/epoch_605.pt 
+  #/home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_GEdgeZ_noc/epoch_300.pt
+  #/home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_GEdgeZ/epoch_505.pt
+  GEdgePosSim_weight: /home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_GEdgeSim/epoch_20.pt
+  edgez_weight:   /home/luochenqi/lcq/experiments/logs/brepgen/furniture_ldm_edgez/epoch_1300.pt
+  #checkpoints/furniture_ldm_edgez.pt
+  surfvae_weight: checkpoints/furniture_vae_surf.pt
+  edgevae_weight: checkpoints/furniture_vae_edge.pt
+  full_weight: /home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_fullGeo/epoch_154.pt #/home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_full/epoch_10.pt
+  surf_weight: /home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_surfA/epoch_20.pt
+  GraphBrep_weight: proj_log/GraphGBrepA/epoch_33.pt # checkpoints/epoch_423.pt
+  save_folder:   sample_brepgen/furniture-3000-time #sample_brepgen/bathtub
+  seed: 1
+  batch_size:   8
+  z_threshold:    0.2 # 0.2
+  bbox_threshold: 0.08 # 0.08
+  num_surfaces:   60 #60
+  num_edges:      50 #50
+  use_cf:         True
+  class_label:    lamp # option: [bathtub/bed/bench/bookshelf/cabinet/chair/couch/lamp/sofa/table]
+          
+
+
+cadnet:
+  surfpos_weight: /home/luochenqi/lcq/experiments/GDBG/proj_log/cadnet40v2_ldm_surfpos/epoch_3000.pt
+  #/home/luochenqi/lcq/experiments/logs/brepgen/furniture_ldm_surfpos_filtered_balanced/epoch_3000.pt
+  #/home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_surfpos/epoch_1000.pt #checkpoints/furniture_ldm_surfpos.pt
+  surfz_weight:   /home/luochenqi/lcq/experiments/GDBG/proj_log/cadnet40v2_ldm_surfZ/epoch_3000.pt
+  #/home/luochenqi/lcq/experiments/logs/brepgen/furniture_ldm_surfz_filtered_balanced/epoch_3000.pt
+  edgepos_weight: /home/luochenqi/lcq/experiments/logs/brepgen/cadnet40v2_ldm_edgepos/epoch_1000.pt
+  edgez_weight:   /home/luochenqi/lcq/experiments/logs/brepgen/cadnet40v2_ldm_edgez/epoch_1000.pt
+  #checkpoints/furniture_ldm_edgez.pt
+  surfvae_weight: checkpoints/cadnet40v2_vae_surf.pt
+  edgevae_weight: checkpoints/cadnet40v2_vae_edge.pt
+  full_weight: /home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_fullGeo/epoch_154.pt #/home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_full/epoch_10.pt
+  surf_weight: /home/luochenqi/lcq/experiments/GDBG/proj_log/furniture_ldm_surfA/epoch_20.pt
+  GraphBrep_weight: proj_log/GraphGBrepA/epoch_33.pt # checkpoints/epoch_423.pt
+  save_folder:   sample_brepgen/cadnet-3000 #sample_brepgen/bathtub
+  seed: 1
+  batch_size:   8
+  z_threshold:    0.2 # 0.2
+  bbox_threshold: 0.08 # 0.08
+  num_surfaces:   60 #60
+  num_edges:      50 #50
+  use_cf:         True
+  class_label:    lamp # option: [bathtub/bed/bench/bookshelf/cabinet/chair/couch/lamp/sofa/table]
