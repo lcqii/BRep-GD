@@ -77,7 +77,11 @@ You can run deduplication with:
 
 
 ## Data and Checkpoints
-Model checkpoints and dataset packages are still being organized. They will be uploaded to cloud storage soon, and the download links will be added here once they are ready.
+The processed dataset files and model checkpoints are available at:
+
+- Dataset (PKLs): [link](https://drive.google.com/drive/folders/1v3geGkp38qvkt-gsT7t6JgaZfF0iZtC_?usp=sharing)
+- LDM checkpoints: [link](https://drive.google.com/drive/folders/1qwFg3ntv3T56hiNcS3PmUCnPI70THnQZ?usp=drive_link)
+- VAE checkpoints: [link](https://drive.google.com/drive/folders/1zBVQ97X4IoTu4gwnXcfvQYQj_CkenZqN?usp=sharing)
 
 Our method can directly use the same data format as BRepGen. This means you can also train our model with data files that have already been preprocessed by BRepGen.
 
