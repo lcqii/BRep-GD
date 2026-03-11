@@ -3,7 +3,6 @@ checkpoints/
 datasets/
 logs/
 samples*/
-sample*/
 proj_log/
 models.tar.gz
 furniture_ldm_GBrep/
