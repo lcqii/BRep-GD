@@ -76,6 +76,14 @@ You can run deduplication with:
     bash deduplicate.sh
 
 
+## Data and Checkpoints
+Model checkpoints and dataset packages are still being organized. They will be uploaded to cloud storage soon, and the download links will be added here once they are ready.
+
+Our method can directly use the same data format as BRepGen. This means you can also train our model with data files that have already been preprocessed by BRepGen.
+
+At the moment, there is no plan to release the raw STEP version of the CadNet40v2 dataset. We do plan to release the processed PKL files. If needed, STEP data can also be converted into PKL format with the provided scripts; please refer to the sampling and generation code for the conversion workflow.
+
+
 ## BRepGen Compatibility Note
 Our data preprocessing and VAE training can be directly reused from BRepGen.
 
